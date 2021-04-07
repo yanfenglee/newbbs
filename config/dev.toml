@@ -1,0 +1,8 @@
+[database]
+url = "postgres://postgres@localhost"
+
+[sparkpost]
+key = "1234567"
+token = "sparkpost-default-token"
+url = "https://api.sparkpost.com"
+version = 2

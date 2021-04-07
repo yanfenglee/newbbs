@@ -1,0 +1,10 @@
+debug = true
+
+[database]
+url = "postgres://postgres@localhost"
+
+[sparkpost]
+key = "sparkpost-dev-key"
+token = "sparkpost-dev-token"
+url = "https://api.sparkpost.com"
+version = 1
