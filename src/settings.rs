@@ -2,12 +2,12 @@ use std::env;
 use config::{ConfigError, Config, File, Environment};
 
 #[derive(Debug, Deserialize)]
-struct Database {
-    url: String,
+pub struct Database {
+    pub url: String,
 }
 
 #[derive(Debug, Deserialize)]
-struct Sparkpost {
+pub struct Sparkpost {
     key: String,
     token: String,
     url: String,
@@ -16,9 +16,9 @@ struct Sparkpost {
 
 #[derive(Debug, Deserialize)]
 pub struct Settings {
-    debug: bool,
-    database: Database,
-    sparkpost: Sparkpost,
+    pub debug: bool,
+    pub database: Database,
+    pub sparkpost: Sparkpost,
 }
 
 impl Settings {
