@@ -2,23 +2,26 @@ use std::env;
 use config::{ConfigError, Config, File, Environment};
 
 #[derive(Debug, Deserialize)]
-pub struct Database {
+pub struct CfgDB {
     pub url: String,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct Sparkpost {
-    key: String,
-    token: String,
-    url: String,
-    version: u8,
+pub struct CfgWeb {
+    pub port: u16,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct CfgRedis {
+    pub address: String,
+    pub port: u16,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Settings {
-    pub debug: bool,
-    pub database: Database,
-    pub sparkpost: Sparkpost,
+    pub db: CfgDB,
+    pub web: CfgWeb,
+    pub redis: CfgRedis,
 }
 
 impl Settings {
@@ -37,13 +40,6 @@ impl Settings {
         // Add in settings from the environment (with a prefix of APP)
         // Eg.. `APP_DEBUG=1 ./target/app` would set the `debug` key
         s.merge(Environment::with_prefix("app"))?;
-
-        // You may also programmatically change settings
-        s.set("database.url", "postgres://")?;
-
-        // Now that we're done, let's access our configuration
-        println!("debug: {:?}", s.get_bool("debug"));
-        println!("database: {:?}", s.get::<String>("database.url"));
 
         // You can deserialize (and thus freeze) the entire configuration as
         s.try_into()

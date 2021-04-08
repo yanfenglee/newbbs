@@ -1,26 +1,33 @@
-use newbbs::settings::Settings;
-use actix_web::{HttpServer, web, HttpResponse, Responder};
-use newbbs::controller::user_controller;
+use newbbs::configure::settings::Settings;
+use actix_web::{HttpServer, App, web, HttpResponse, Responder};
+use newbbs::controller::health_controller;
+use newbbs::db::RB;
+use std::net::{SocketAddr};
+use log::info;
 
 async fn index() -> impl Responder {
     HttpResponse::Ok().body("Hello newbbs")
 }
 
 #[actix_web::main]
-fn main() {
-    let settings = Settings::new().unwrap();
+async fn main() -> std::io::Result<()> {
     env_logger::init();
-    RB.link(&settings.database.url).await.unwrap();
+
+    info!("server start ...");
+
+    let settings = Settings::new().unwrap();
+    RB.link(&settings.db.url).await.unwrap();
 
     HttpServer::new(|| {
         App::new().app_data(web::JsonConfig::default().limit(8 * 1024 * 1024))
             .route("/", web::get().to(index))
-            .configure(user_controller::config)
+            .configure(health_controller::config)
     })
-        .bind(&CONFIG.server_url)?
+        .bind(SocketAddr::from(([0, 0, 0, 0], settings.web.port)))?
         .run()
-        .await;
+        .await?;
 
-    // Print out our settings
-    println!("{:?}", settings);
+    info!("server end !!!");
+
+    Ok(())
 }

@@ -1,8 +1,11 @@
-[database]
-url = "postgres://postgres@db.com"
 
-[sparkpost]
-key = "asdfasdf"
-token = "sparkpost-default-token"
-url = "https://api.sparkpost.com"
-version = 3
+[db]
+url = "mysql://localhost:3306/test"
+
+[redis]
+address = "localhost"
+port = 6379
+
+[web]
+port = 2345
+

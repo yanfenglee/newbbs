@@ -1,17 +1,16 @@
 #[macro_use]
 extern crate serde_derive;
 
-pub mod settings;
-pub mod controller;
-mod util;
-mod service;
-mod middleware;
-mod domain;
-mod configure;
+#[macro_use]
+extern crate lazy_static;
 
-lazy_static! {
-    pub static ref RB:Rbatis={
-        let mut rbatis = Rbatis::new();
-        return rbatis;
-    };
-}
+// #[macro_use]
+// extern crate rbatis_macro_driver;
+
+pub mod controller;
+pub mod util;
+pub mod service;
+pub mod middleware;
+pub mod domain;
+pub mod configure;
+pub mod db;
