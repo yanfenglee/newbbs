@@ -3,7 +3,6 @@ use actix_web::{HttpResponse, Responder, HttpRequest};
 use rbatis::core::Error;
 use serde::{Deserialize, Serialize};
 use serde::de::DeserializeOwned;
-use crate::base::resp::RespErr::{CodeError, SimpleError};
 use futures::future::{ok, Ready};
 
 /// response struct
