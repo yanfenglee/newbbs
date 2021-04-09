@@ -14,3 +14,4 @@ pub mod middleware;
 pub mod domain;
 pub mod configure;
 pub mod db;
+pub mod base;
