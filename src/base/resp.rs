@@ -1,9 +1,10 @@
 use actix_http::Response;
-use actix_web::HttpResponse;
+use actix_web::{HttpResponse, Responder, HttpRequest};
 use rbatis::core::Error;
 use serde::{Deserialize, Serialize};
 use serde::de::DeserializeOwned;
 use crate::base::resp::RespErr::{CodeError, SimpleError};
+use futures::future::{ok, Ready};
 
 /// response struct
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -69,27 +70,41 @@ pub fn resp<T>(arg: &Result<T>) -> Response where T: Serialize + DeserializeOwne
     HttpResponse::Ok().json2(&res)
 }
 
-pub fn resp_ok<T>(data: T) -> Response where T: Serialize + DeserializeOwned + Clone {
-    resp(&Ok(data))
+pub struct JsonResponse {
+    inner: Response,
 }
 
-pub fn resp_err(err: &str) -> Response {
-    resp::<()>(&Err(SimpleError(err.into())))
+impl Responder for JsonResponse {
+    type Error = ();
+    type Future = Ready<std::result::Result<Response, ()>>;
+
+    #[inline]
+    fn respond_to(self, _: &HttpRequest) -> Self::Future {
+        ok(self.inner)
+    }
 }
 
-pub fn resp_err2(code: &str, err: &str) -> Response {
-    resp::<()>(&Err(CodeError(code.into(), err.into())))
+impl<T> From<Result<T>> for JsonResponse where T: Serialize + DeserializeOwned + Clone {
+    fn from(data: Result<T>) -> Self {
+        Self {
+            inner: resp(&data)
+        }
+    }
+}
+
+impl From<RespErr> for JsonResponse{
+    fn from(data: RespErr) -> Self {
+        Self {
+            inner: resp::<()>(&Err(data))
+        }
+    }
 }
 
 
 #[test]
 fn test() {
-    let responder = resp_err("error");
-    println!("{:?}", responder);
-}
-
-#[test]
-fn test2() {
-    let res: Response = resp_ok(String::from("haha"));
-    println!("{:?}", res);
+    let res: JsonResponse = SimpleError("error".into()).into();
+    println!("{:?}", res.inner);
+    let res: JsonResponse = CodeError("123".into(), "error".into()).into();
+    println!("{:?}", res.inner);
 }
