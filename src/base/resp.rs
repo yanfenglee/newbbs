@@ -69,6 +69,10 @@ pub fn resp<T>(arg: &Result<T>) -> Response where T: Serialize + DeserializeOwne
     HttpResponse::Ok().json2(&res)
 }
 
+pub fn resp_ok<T>(data: T) -> Response where T: Serialize + DeserializeOwned + Clone {
+    resp(&Ok(data))
+}
+
 pub fn resp_err(err: &str) -> Response {
     resp::<()>(&Err(SimpleError(err.into())))
 }
@@ -82,4 +86,10 @@ pub fn resp_err2(code: &str, err: &str) -> Response {
 fn test() {
     let responder = resp_err("error");
     println!("{:?}", responder);
+}
+
+#[test]
+fn test2() {
+    let res: Response = resp_ok(String::from("haha"));
+    println!("{:?}", res);
 }
