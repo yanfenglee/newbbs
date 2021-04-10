@@ -5,6 +5,7 @@ use rbatis::core::Error;
 use serde::{Deserialize, Serialize};
 use serde::de::DeserializeOwned;
 use futures::future::{ok, Ready};
+use crate::base::resp::RespErr::{SimpleError, CodeError};
 
 /// response struct
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -95,6 +96,14 @@ impl From<RespErr> for JsonResponse {
     fn from(data: RespErr) -> Self {
         resp_json::<()>(&Err(data))
     }
+}
+
+pub fn code_error<T: Into<String>>(code: T, err: T) -> JsonResponse {
+    CodeError(code.into(), err.into()).into()
+}
+
+pub fn simple_error<T: Into<String>>(err: T) -> JsonResponse {
+    SimpleError(err.into()).into()
 }
 
 

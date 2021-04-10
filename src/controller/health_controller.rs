@@ -1,6 +1,5 @@
 use actix_web::{web, get};
-use crate::base::resp::JsonResponse;
-use crate::base::resp::RespErr::CodeError;
+use crate::base::resp::{JsonResponse, code_error};
 use crate::domain::UserDTO;
 use crate::db::RB;
 //use rbatis::wrapper::Wrapper;
@@ -31,7 +30,7 @@ pub async fn health() -> JsonResponse {
 #[get("/error")]
 pub async fn err() -> JsonResponse {
     info!("call health err...");
-    CodeError("101".into(), "test error".into()).into()
+    code_error("101", "test error")
 }
 
 #[get("/db")]
@@ -43,7 +42,7 @@ pub async fn db() -> JsonResponse {
 
     match test_db().await {
         Ok(data) => Ok(data).into(),
-        Err(e) => CodeError("101".into(), e.to_string()).into(),
+        Err(e) => code_error("101", &e.to_string()),
     }
 }
 
@@ -55,6 +54,6 @@ pub async fn db2() -> JsonResponse {
 
     match data {
         Ok(data) => Ok(data).into(),
-        Err(e) => CodeError("101".into(), e.to_string()).into(),
+        Err(e) => code_error("101", &e.to_string()),
     }
 }
