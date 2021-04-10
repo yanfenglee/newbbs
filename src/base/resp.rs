@@ -1,3 +1,4 @@
+
 use actix_http::Response;
 use actix_web::{HttpResponse, Responder, HttpRequest};
 use rbatis::core::Error;
@@ -28,16 +29,15 @@ impl From<Error> for RespErr {
 pub type Result<T> = std::result::Result<T, RespErr>;
 
 
-/// Returns Resp<T> json.
+/// Returns JsonResponse.
 ///
 /// # Examples
 ///
 /// Basic usage:
 ///
 /// ```
-/// use newbbs::base::resp::resp;
+/// use newbbs::base::resp::{JsonResponse};
 /// use newbbs::base::resp::RespErr::SimpleError;
-/// use newbbs::base::resp::RespErr::CodeError;
 ///
 /// #[derive(Serialize, Deserialize, Clone, Debug)]
 /// pub struct UserDTO {
@@ -45,28 +45,30 @@ pub type Result<T> = std::result::Result<T, RespErr>;
 ///     pub password: String,
 /// }
 ///
-/// let data = UserDTO {
-///     username: "xiaoming".into(),
-///     password: "123456".into(),
-/// };
+/// pub async fn err() -> JsonResponse {
+///     SimpleError(String::from("some error")).into()
+/// }
 ///
-/// resp(&Ok(data));
-/// resp(&Err(SimpleError("服务器内部异常".into())));
-/// resp(&Err(CodeError("1001".into(), "账号未登录".into())));
+/// pub async fn login(user: UserDTO) -> JsonResponse {
+///     Ok(user).into()
+/// }
 ///
 /// ```
-pub fn resp<T>(arg: &Result<T>) -> Response where T: Serialize + DeserializeOwned + Clone {
+
+pub fn resp_json<T>(arg: &Result<T>) -> JsonResponse where T: Serialize + DeserializeOwned + Clone {
     let res = match arg {
         Ok(data) => Resp { code: "0".into(), msg: None, data: Some(data) },
         Err(e) => {
             match e {
-                RespErr::SimpleError(e) => Resp { code: "1111".into(), msg: Some(e.clone()), data: None },
+                RespErr::SimpleError(e) => Resp { code: "111111".into(), msg: Some(e.clone()), data: None },
                 RespErr::CodeError(code, e) => Resp { code: code.clone(), msg: Some(e.clone()), data: None },
             }
         }
     };
 
-    HttpResponse::Ok().json2(&res)
+    JsonResponse {
+        inner: HttpResponse::Ok().json2(&res)
+    }
 }
 
 pub struct JsonResponse {
@@ -85,25 +87,27 @@ impl Responder for JsonResponse {
 
 impl<T> From<Result<T>> for JsonResponse where T: Serialize + DeserializeOwned + Clone {
     fn from(data: Result<T>) -> Self {
-        Self {
-            inner: resp(&data)
-        }
+        resp_json(&data)
     }
 }
 
-impl From<RespErr> for JsonResponse{
+impl From<RespErr> for JsonResponse {
     fn from(data: RespErr) -> Self {
-        Self {
-            inner: resp::<()>(&Err(data))
-        }
+        resp_json::<()>(&Err(data))
     }
 }
 
 
-#[test]
-fn test() {
-    let res: JsonResponse = SimpleError("error".into()).into();
-    println!("{:?}", res.inner);
-    let res: JsonResponse = CodeError("123".into(), "error".into()).into();
-    println!("{:?}", res.inner);
+#[cfg(test)]
+mod test {
+    use crate::base::resp::JsonResponse;
+    use crate::base::resp::RespErr::{SimpleError, CodeError};
+
+    #[test]
+    fn test() {
+        let res: JsonResponse = SimpleError("error".into()).into();
+        println!("{:?}", res.inner);
+        let res: JsonResponse = CodeError("123".into(), "error".into()).into();
+        println!("{:?}", res.inner);
+    }
 }

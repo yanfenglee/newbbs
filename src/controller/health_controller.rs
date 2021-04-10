@@ -3,6 +3,7 @@ use actix_web::{web, get};
 use crate::base::resp::JsonResponse;
 use log::info;
 use crate::base::resp::RespErr::CodeError;
+use crate::domain::UserDTO;
 
 /// config route service
 pub fn config(cfg: &mut web::ServiceConfig) {
@@ -14,8 +15,15 @@ pub fn config(cfg: &mut web::ServiceConfig) {
 
 #[get("")]
 pub async fn health() -> JsonResponse {
-    info!("call health...");
-    Ok(String::from("SUCCESS")).into()
+    //info!("call health...");
+
+    let user = UserDTO {
+        token: "xxx".into(),
+        username: "newbbs".into(),
+        nickname: "newbbs-baby".into(),
+    };
+
+    Ok(user).into()
 }
 
 #[get("/error")]
