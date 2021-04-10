@@ -1,11 +1,15 @@
+
+#[macro_use]
+extern crate log;
+
 #[macro_use]
 extern crate serde_derive;
 
 #[macro_use]
 extern crate lazy_static;
 
-// #[macro_use]
-// extern crate rbatis_macro_driver;
+#[macro_use]
+extern crate rbatis;
 
 pub mod controller;
 pub mod util;

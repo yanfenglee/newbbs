@@ -3,9 +3,7 @@ use actix_web::{HttpServer, App, web, HttpResponse, Responder};
 use newbbs::controller::health_controller;
 use newbbs::db::RB;
 use std::net::{SocketAddr};
-
-#[macro_use]
-extern crate log;
+use log::info;
 
 async fn index() -> impl Responder {
     HttpResponse::Ok().body("Hello newbbs")
