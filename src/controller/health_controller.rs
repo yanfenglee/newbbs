@@ -1,8 +1,13 @@
 use actix_web::{web, get};
 use crate::base::resp::{JsonResponse, code_error};
-use crate::domain::UserDTO;
 use crate::db::RB;
 //use rbatis::wrapper::Wrapper;
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+struct HealthDTO {
+    pub token: String,
+    pub username: String,
+}
 
 /// config route service
 pub fn config(cfg: &mut web::ServiceConfig) {
@@ -18,10 +23,9 @@ pub fn config(cfg: &mut web::ServiceConfig) {
 pub async fn health() -> JsonResponse {
     //info!("call health...");
 
-    let user = UserDTO {
+    let user = HealthDTO {
         token: "xxx".into(),
         username: "newbbs".into(),
-        nickname: "newbbs-baby".into(),
     };
 
     Ok(user).into()
