@@ -1,6 +1,7 @@
 use newbbs::configure::settings::Settings;
 use actix_web::{HttpServer, App, web, HttpResponse, Responder};
 use newbbs::controller::health_controller;
+use newbbs::controller::post_controller;
 use newbbs::db::RB;
 use std::net::{SocketAddr};
 use log::info;
@@ -22,6 +23,7 @@ async fn main() -> std::io::Result<()> {
         App::new().app_data(web::JsonConfig::default().limit(8 * 1024 * 1024))
             .route("/", web::get().to(index))
             .configure(health_controller::config)
+            .configure(post_controller::config)
     })
         .bind(SocketAddr::from(([0, 0, 0, 0], settings.web.port)))?
         .run()

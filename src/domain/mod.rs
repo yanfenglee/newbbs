@@ -1,4 +1,5 @@
 use chrono::NaiveDateTime;
+use rbatis::core::value::DateTimeNow;
 
 /// 帖子表
 #[crud_enable]
@@ -16,6 +17,25 @@ pub struct NBPost {
     pub group_id: i64,                  // 群名称
     pub created_at: NaiveDateTime,      // 创建时间
     pub updated_at: NaiveDateTime,      // 更新时间
+}
+
+impl Default for NBPost {
+    fn default() -> Self {
+        Self {
+            id: 0,
+            title: "".to_string(),
+            content: "".to_string(),
+            author_id: 0,
+            author_name: "".to_string(),
+            up_cnt: 0,
+            down_cnt: 0,
+            comments_cnt: 0,
+            parent_id: 0,
+            group_id: 0,
+            created_at: NaiveDateTime::now(),
+            updated_at: NaiveDateTime::now()
+        }
+    }
 }
 
 /// 群表
