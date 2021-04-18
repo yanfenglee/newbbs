@@ -1,10 +1,11 @@
 use chrono::NaiveDateTime;
 use rbatis::core::value::DateTimeNow;
+use rbatis::plugin::snowflake::new_snowflake_id;
 
 /// 帖子表
 #[crud_enable]
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct NBPost {
+pub struct NbPost {
     pub id: i64,                        // primary key
     pub title: String,                  // 标题
     pub content: String,                // 帖子内容
@@ -20,10 +21,10 @@ pub struct NBPost {
     pub updated_at: NaiveDateTime,      // 更新时间
 }
 
-impl Default for NBPost {
+impl Default for NbPost {
     fn default() -> Self {
         Self {
-            id: 0,
+            id: new_snowflake_id(),
             title: "".to_string(),
             content: "".to_string(),
             author_id: 0,
@@ -43,7 +44,7 @@ impl Default for NBPost {
 /// 群表
 #[crud_enable]
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct NBGroup {
+pub struct NbGroup {
     pub id: i64,                        // primary key
     pub name: String,                   // 群名(unique key)
     pub description: String,            // 群描述
@@ -53,10 +54,10 @@ pub struct NBGroup {
     pub updated_at: NaiveDateTime,      // 更新时间
 }
 
-impl Default for NBGroup {
+impl Default for NbGroup {
     fn default() -> Self {
         Self {
-            id: 0,
+            id: new_snowflake_id(),
             name: "".to_string(),
             description: "".to_string(),
             member_cnt: 0,
@@ -70,17 +71,17 @@ impl Default for NBGroup {
 /// 群成员表
 #[crud_enable]
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct NBGroupMember {
+pub struct NbGroupMember {
     pub id: i64,                        // primary key
     pub member_id: i64,                 // 成员id
     pub member_name: String,            // 成员名字
     pub created_at: NaiveDateTime,      // 创建时间
 }
 
-impl Default for NBGroupMember {
+impl Default for NbGroupMember {
     fn default() -> Self {
         Self {
-            id: 0,
+            id: new_snowflake_id(),
             member_id: 0,
             member_name: "".to_string(),
             created_at: NaiveDateTime::now()
@@ -91,7 +92,7 @@ impl Default for NBGroupMember {
 /// 消息通知表
 #[crud_enable]
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct NBMessage {
+pub struct NbMessage {
     pub id: i64,                        // primary key
     pub member_id: i64,                 // 成员id
     pub msg_type: i32,                  // 消息类型
@@ -101,10 +102,10 @@ pub struct NBMessage {
     pub created_at: NaiveDateTime,      // 创建时间
 }
 
-impl Default for NBMessage {
+impl Default for NbMessage {
     fn default() -> Self {
         Self {
-            id: 0,
+            id: new_snowflake_id(),
             member_id: 0,
             msg_type: 0,
             msg: "".to_string(),

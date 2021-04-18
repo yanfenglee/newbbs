@@ -1,6 +1,6 @@
 
 [db]
-url = "mysql://root:123456@localhost:3306/test"
+url = "mysql://root:123456@localhost:3306/newbbs"
 
 [redis]
 address = "localhost"
